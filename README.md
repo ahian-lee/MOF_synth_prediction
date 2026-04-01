@@ -1,4 +1,4 @@
-# MOF Batch Stability and Synthesizability Toolkit
+# MOF_synth_prediction
 
 This repository packages two parts of my MOF workflow:
 
@@ -10,7 +10,7 @@ This repository does not redistribute the original `MOFSimplify` web frontend or
 ## Repository Layout
 
 ```text
-mof-tools-github/
+MOF_synth_prediction/
 ├── mofsynth/
 │   ├── predict_PU_learning.py
 │   ├── generate_crystal_graph.py
@@ -20,6 +20,12 @@ mof-tools-github/
 ├── mofsimplify_extensions/
 │   ├── batch_thermal_prediction.py
 │   └── optimize_structures.py
+│   └── runtime/
+│       ├── model/thermal/ANN/
+│       └── zeo++-0.3/network
+├── envs/
+│   ├── mofsynth_environment.yml
+│   └── thermal_environment.yml
 ├── scripts/
 │   ├── merge_predictions.py
 │   └── run_combined_pipeline.sh
@@ -58,7 +64,8 @@ python mofsynth/predict_PU_learning.py \
 
 Runs batch thermal-stability prediction for many MOF CIF files using an existing `MOFSimplify` installation.
 
-- Depends on upstream `MOFSimplify`, `molSimplify`, Zeo++, TensorFlow, and the upstream thermal model files
+- Includes the thermal ANN model files and Zeo++ runtime binary needed by the batch predictor
+- Still requires a Python environment with `molSimplify`, `tensorflow`, `pymatgen`, and related scientific packages
 - Does not include the upstream frontend or web application
 - Converts CIFs to geometric and RAC descriptors, applies the corrected feature mapping, then predicts thermal stability in Celsius
 
@@ -66,20 +73,17 @@ Main command:
 
 ```bash
 python mofsimplify_extensions/batch_thermal_prediction.py \
-  --mofsimplify-root /path/to/MOFSimplify \
+  --mofsimplify-root ./mofsimplify_extensions/runtime \
   --cif-folder ./my_cifs \
   --output-dir ./thermal_results
 ```
 
-## Thermal Model Dependency
+## Environment Files
 
-The thermal prediction extension expects these files to exist under your upstream `MOFSimplify` checkout:
+This repository includes two environment files:
 
-```text
-model/thermal/ANN/final_model_T_few_epochs.h5
-model/thermal/ANN/train.csv
-zeo++-0.3/network
-```
+- `envs/mofsynth_environment.yml` for synthesizability prediction
+- `envs/thermal_environment.yml` for thermal-stability prediction
 
 ## Combined Workflow
 
